@@ -22,6 +22,7 @@ sealed interface JokesListIntent {
 
 sealed interface JokesListEvent {
     data class GotoJokeDetails(val joke: Joke): JokesListEvent
+    data class ShowError(val message: String): JokesListEvent
 }
 
 class JokesListViewModel(
@@ -59,11 +60,20 @@ class JokesListViewModel(
                 loading = true
             )
 
-            val jokes = repository.getJokes()
-            _state.value = _state.value.copy(
-                jokes = jokes,
-                loading = false
-            )
+            repository.getJokes()
+                .onSuccess { jokes ->
+                    _state.value = _state.value.copy(
+                        jokes = jokes,
+                        loading = false
+                    )
+                }
+                .onFailure { error ->
+                    val errorMessage = error.localizedMessage ?: "Unknown error"
+                    _eventChannel.send(JokesListEvent.ShowError(errorMessage))
+                    _state.value = _state.value.copy(
+                        loading = false
+                    )
+                }
         }
     }
 }

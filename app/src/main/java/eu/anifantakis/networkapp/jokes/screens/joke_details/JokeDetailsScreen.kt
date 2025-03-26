@@ -59,11 +59,13 @@ private fun JokeDetailsScreen(
         Text(
             text = state.joke?.setup ?: "",
             fontWeight = FontWeight.Bold,
-            fontSize = 48.sp
+            fontSize = 48.sp,
+            lineHeight = 56.sp
         )
         Text(
             text = state.joke?.punchline ?: "",
-            fontSize = 24.sp
+            fontSize = 24.sp,
+            lineHeight = 32.sp
         )
 
         Button(

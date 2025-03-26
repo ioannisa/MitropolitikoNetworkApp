@@ -1,15 +1,25 @@
 package eu.anifantakis.networkapp.jokes.data
 
+import eu.anifantakis.networkapp.jokes.data.network.KtorClient
 import eu.anifantakis.networkapp.jokes.model.Joke
-import kotlinx.coroutines.delay
+import eu.anifantakis.networkapp.jokes.model.JokeDto
+import eu.anifantakis.networkapp.jokes.model.toJoke
+import io.ktor.client.call.body
+import io.ktor.client.request.get
 
 class JokesRepository {
-    suspend fun getJokes(): List<Joke> {
-        delay(1000L)
-        return listOf(
-            Joke(setup = "Joke 1", punchline = "Answer 1"),
-            Joke(setup = "Joke 2", punchline = "Answer 2"),
-            Joke(setup = "Joke 3", punchline = "Answer 3"),
-        )
+    private val httpClient = KtorClient.httpClient
+    private val baseUrl = "https://official-joke-api.appspot.com"
+    private val randomJokesPath = "/random_ten"
+
+    /**
+     * Fetches a list of random jokes from the API.
+     * Returns a Result wrapping the list of jokes on success, or an exception on failure.
+     */
+    suspend fun getJokes(): Result<List<Joke>> {
+        return runCatching {    // Use runCatching for concise success/failure handling
+            httpClient.get("$baseUrl$randomJokesPath").body<List<JokeDto>>()
+                .map { it.toJoke() }
+        }
     }
 }

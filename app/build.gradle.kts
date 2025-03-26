@@ -71,6 +71,9 @@ dependencies {
     // https://github.com/ioannisa/NavTypeParcelableHelperLibrary
     implementation(libs.navtypeparcelablehelperlibrary)
 
+    // Ktor
+    implementation(libs.bundles.ktor)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

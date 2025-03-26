@@ -1,5 +1,6 @@
 package eu.anifantakis.networkapp.jokes.screens.jokes_list
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -41,6 +43,7 @@ fun JokesListScreenRoot(
     onGoToJokeDetails: (Joke) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.eventChannel.collect {
@@ -48,6 +51,10 @@ fun JokesListScreenRoot(
                 is JokesListEvent.GotoJokeDetails -> {
                     onGoToJokeDetails(it.joke)
                     //Toast.makeText(context, "Clicked on ${it.joke.title}", Toast.LENGTH_SHORT).show()
+                }
+
+                is JokesListEvent.ShowError -> {
+                    Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
