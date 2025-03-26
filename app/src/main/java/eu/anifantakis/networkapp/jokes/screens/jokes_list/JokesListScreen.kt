@@ -102,8 +102,8 @@ private fun JokesListScreen(
                             Column(
                                 modifier = Modifier.padding(16.dp)
                             ) {
-                                Text(text = it.setup, fontWeight = FontWeight.Bold)
-                                Text(text = it.punchline)
+                                Text(text = it.question, fontWeight = FontWeight.Bold)
+                                Text(text = it.answer)
                             }
                         }
                     }

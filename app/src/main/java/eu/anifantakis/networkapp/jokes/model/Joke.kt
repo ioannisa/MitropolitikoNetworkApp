@@ -12,8 +12,8 @@ data class Joke @OptIn(ExperimentalUuidApi::class) constructor(
     val id: Int,
 
     @Serializable(with = StringSanitizer::class)
-    val setup: String,
+    val question: String,
 
     @Serializable(with = StringSanitizer::class)
-    val punchline: String,
+    val answer: String,
 ): Parcelable

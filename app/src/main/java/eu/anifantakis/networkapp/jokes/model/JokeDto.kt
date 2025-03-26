@@ -12,7 +12,7 @@ data class JokeDto(
 fun JokeDto.toJoke(): Joke {
     return Joke(
         id = id,
-        setup = setup,
-        punchline = punchline
+        question = setup,
+        answer = punchline
     )
 }
