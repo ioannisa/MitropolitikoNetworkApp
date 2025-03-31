@@ -17,3 +17,12 @@ data class Joke @OptIn(ExperimentalUuidApi::class) constructor(
     @Serializable(with = StringSanitizer::class)
     val answer: String,
 ): Parcelable
+
+/**
+ * Extension function to convert a Joke domain model to a JokeEntity.
+ */
+fun Joke.toEntity(): JokeEntity = JokeEntity(
+    id = id,
+    question = question,
+    answer = answer,
+)

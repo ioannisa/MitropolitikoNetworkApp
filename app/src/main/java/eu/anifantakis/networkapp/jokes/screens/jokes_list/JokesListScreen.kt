@@ -27,6 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import eu.anifantakis.networkapp.jokes.data.JokesRepository
+import eu.anifantakis.networkapp.jokes.data.di.AppModule
 import eu.anifantakis.networkapp.jokes.model.Joke
 
 @Composable
@@ -36,7 +37,10 @@ fun JokesListScreenRoot(
         factory = viewModelFactory {
             initializer {
                 JokesListViewModel(
-                    repository = JokesRepository()
+                    repository = JokesRepository(
+                        httpClient = AppModule.ktorClient,
+                        database = AppModule.jokesDatabase.jokesDao()
+                    )
                 )
             }
         }

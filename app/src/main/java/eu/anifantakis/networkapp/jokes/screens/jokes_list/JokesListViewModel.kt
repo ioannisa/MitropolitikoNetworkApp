@@ -25,8 +25,11 @@ sealed interface JokesListEvent {
     data class ShowError(val message: String): JokesListEvent
 }
 
+/**
+ * ViewModel for the jokes list screen with manual database observation and network loading.
+ */
 class JokesListViewModel(
-    val repository: JokesRepository
+    private val repository: JokesRepository
 ): ViewModel() {
 
     private val _state = MutableStateFlow(JokesListState())
@@ -35,10 +38,16 @@ class JokesListViewModel(
     private val _eventChannel = Channel<JokesListEvent>()
     val eventChannel = _eventChannel.receiveAsFlow()
 
+    init {
+        // Start observing database and then load from network
+        loadFromDB()
+        loadFromNetwork()
+    }
+
     fun onIntent(intent: JokesListIntent) {
         when(intent) {
             is JokesListIntent.Refresh -> {
-                loadJokes()
+                refresh()
             }
 
             is JokesListIntent.ClickOnJoke -> {
@@ -49,31 +58,51 @@ class JokesListViewModel(
         }
     }
 
-    init {
-        onIntent(JokesListIntent.Refresh)
-    }
-
-    private fun loadJokes() {
+    /**
+     * Sets up observation of the local database.
+     * This starts immediately to show cached data.
+     */
+    private fun loadFromDB() {
         viewModelScope.launch {
 
-            _state.value = _state.value.copy(
-                loading = true
-            )
+            // Start collecting from the Flow of jokes from the database
+            repository.getJokes().collect { jokes ->
+                _state.value = _state.value.copy(
+                    jokes = jokes
+                )
+            }
+        }
+    }
 
-            repository.getJokes()
-                .onSuccess { jokes ->
-                    _state.value = _state.value.copy(
-                        jokes = jokes,
-                        loading = false
-                    )
+    /**
+     * Loads fresh data from the network API.
+     * This doesn't directly update the UI state, but triggers
+     * database updates which will be observed via loadFromDB().
+     */
+    private fun loadFromNetwork() {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(loading = true)
+
+            repository.fetchJokesFromApi()
+                .onSuccess {
+                    // Success is handled through database Flow updates
+                    _state.value = _state.value.copy(loading = false)
                 }
                 .onFailure { error ->
-                    val errorMessage = error.localizedMessage ?: "Unknown error"
+                    val errorMessage = error.localizedMessage ?: "Network error. Using cached data."
                     _eventChannel.send(JokesListEvent.ShowError(errorMessage))
-                    _state.value = _state.value.copy(
-                        loading = false
-                    )
+                    _state.value = _state.value.copy(loading = false)
                 }
+
         }
+    }
+
+    /**
+     * Refresh jokes from the network.
+     * This is effectively the same as loadFromNetwork but with
+     * a different name to clarify its use as a user-triggered action.
+     */
+    private fun refresh() {
+        loadFromNetwork()
     }
 }
