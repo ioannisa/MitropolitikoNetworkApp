@@ -23,7 +23,7 @@ sealed interface JokesDetailsEvent {
 }
 
 class JokesDetailsViewModel(
-    val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
     private val _state = MutableStateFlow(JokeDetailsState())
