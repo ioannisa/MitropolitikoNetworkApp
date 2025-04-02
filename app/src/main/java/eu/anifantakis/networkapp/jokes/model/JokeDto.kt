@@ -13,6 +13,7 @@ fun JokeDto.toJoke(): Joke {
     return Joke(
         id = id,
         question = setup,
-        answer = punchline
+        answer = punchline,
+        isFavorite = false // Default value for new jokes from API
     )
 }

@@ -16,6 +16,8 @@ data class Joke @OptIn(ExperimentalUuidApi::class) constructor(
 
     @Serializable(with = StringSanitizer::class)
     val answer: String,
+
+    val isFavorite: Boolean = false
 ): Parcelable
 
 /**
@@ -25,4 +27,5 @@ fun Joke.toEntity(): JokeEntity = JokeEntity(
     id = id,
     question = question,
     answer = answer,
+    isFavorite = isFavorite
 )

@@ -18,6 +18,7 @@ data class JokesListState(
 sealed interface JokesListIntent {
     data object Refresh: JokesListIntent
     data class ClickOnJoke(val joke: Joke): JokesListIntent
+    data class ToggleFavorite(val joke: Joke): JokesListIntent
 }
 
 sealed interface JokesListEvent {
@@ -55,6 +56,22 @@ class JokesListViewModel(
                     _eventChannel.send(JokesListEvent.GotoJokeDetails(intent.joke))
                 }
             }
+
+            is JokesListIntent.ToggleFavorite -> {
+                toggleFavorite(intent.joke)
+            }
+        }
+    }
+
+    /**
+     * Toggle the favorite status of a joke
+     */
+    private fun toggleFavorite(joke: Joke) {
+        viewModelScope.launch {
+            repository.toggleFavorite(joke.id)
+                .onFailure { error ->
+                    _eventChannel.send(JokesListEvent.ShowError("Failed to update favorite status: ${error.localizedMessage}"))
+                }
         }
     }
 
@@ -64,7 +81,6 @@ class JokesListViewModel(
      */
     private fun loadFromDB() {
         viewModelScope.launch {
-
             // Start collecting from the Flow of jokes from the database
             repository.getJokes().collect { jokes ->
                 _state.value = _state.value.copy(
@@ -93,7 +109,6 @@ class JokesListViewModel(
                     _eventChannel.send(JokesListEvent.ShowError(errorMessage))
                     _state.value = _state.value.copy(loading = false)
                 }
-
         }
     }
 

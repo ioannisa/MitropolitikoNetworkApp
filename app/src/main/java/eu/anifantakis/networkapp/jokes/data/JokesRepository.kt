@@ -24,8 +24,10 @@ class JokesRepository(
     /**
      * Gets a Flow of all jokes from the database.
      * This should be observed by the UI to get database updates.
+     * Jokes are sorted with favorites at the top.
      */
     fun getJokes(): Flow<List<Joke>> {
+        // The ordering is handled by the DAO query (ORDER BY isFavorite DESC, id ASC)
         return database.getAllJokes().map { entities ->
             entities.map { it.toJoke() }
         }
@@ -33,8 +35,7 @@ class JokesRepository(
 
     /**
      * Fetches jokes from the network API and updates the database.
-     * This doesn't return the fetched data directly - instead, the database
-     * will be updated, which will trigger observers of the getJokes() Flow.
+     * Preserves favorites during refresh.
      *
      * @return Result indicating success or failure of the fetch operation
      */
@@ -49,8 +50,10 @@ class JokesRepository(
                 jokeDto.toJoke().toEntity()
             }
 
-            // Delete all jokes and upsert new ones
-            database.deleteAllJokes()
+            // Delete only non-favorite jokes
+            database.deleteAllNonFavoriteJokes()
+
+            // Upsert new jokes (this won't affect existing favorites due to Room's upsert behavior)
             database.upsertJokes(jokesToUpsert)
 
             println("Successfully updated database with ${remoteJokes.size} jokes")
@@ -63,6 +66,33 @@ class JokesRepository(
     suspend fun getJokeById(id: Int): Result<Joke?> {
         return runCatching {
             database.getJokeById(id)?.toJoke()
+        }
+    }
+
+    /**
+     * Toggle the favorite status of a joke.
+     */
+    suspend fun toggleFavorite(jokeId: Int): Result<Unit> {
+        return runCatching {
+            database.toggleFavorite(jokeId)
+        }
+    }
+
+    /**
+     * Set the favorite status of a joke.
+     */
+    suspend fun setFavorite(jokeId: Int, isFavorite: Boolean): Result<Unit> {
+        return runCatching {
+            database.setFavorite(jokeId, isFavorite)
+        }
+    }
+
+    /**
+     * Get the current favorite status of a joke.
+     */
+    suspend fun isFavorite(jokeId: Int): Result<Boolean> {
+        return runCatching {
+            database.getJokeById(jokeId)?.isFavorite ?: false
         }
     }
 }
