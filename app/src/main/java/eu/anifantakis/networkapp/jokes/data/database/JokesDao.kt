@@ -62,4 +62,7 @@ interface JokesDao {
      */
     @Query("UPDATE joke SET isFavorite = :isFavorite WHERE id = :jokeId")
     suspend fun setFavorite(jokeId: Int, isFavorite: Boolean)
+
+    @Query("SELECT id FROM joke WHERE isFavorite = 1")
+    suspend fun getFavoriteJokesIds(): List<Int>
 }

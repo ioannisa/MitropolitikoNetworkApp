@@ -43,12 +43,19 @@ class JokesRepository(
         return runCatching {
             println("Fetching jokes from API")
 
+            // First, get a list of all favorite movies to preserve their status
+            val favoriteJokesIds = database.getFavoriteJokesIds()
+
             // Fetch jokes from the API
             val remoteJokes = httpClient.get("$baseUrl$randomJokesPath").body<List<JokeDto>>()
 
-            val jokesToUpsert = remoteJokes.map { jokeDto ->
-                jokeDto.toJoke().toEntity()
-            }
+            val jokesToUpsert = remoteJokes
+                .filter { jokeDto ->
+                    jokeDto.id !in favoriteJokesIds
+                }
+                .map { jokeDto ->
+                    jokeDto.toJoke().toEntity()
+                }
 
             // Delete only non-favorite jokes
             database.deleteAllNonFavoriteJokes()
