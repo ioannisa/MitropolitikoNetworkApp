@@ -18,9 +18,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Initialize our dependencies
-        AppModule.initialize(applicationContext)
-
         enableEdgeToEdge()
         setContent {
             NetworkAppTheme {
