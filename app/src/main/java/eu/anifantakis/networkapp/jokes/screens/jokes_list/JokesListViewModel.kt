@@ -1,5 +1,6 @@
 package eu.anifantakis.networkapp.jokes.screens.jokes_list
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.anifantakis.networkapp.jokes.data.JokesRepository
@@ -25,6 +26,7 @@ sealed interface JokesListEvent {
     data class ShowError(val message: String): JokesListEvent
 }
 
+@Stable
 class JokesListViewModel(
     val repository: JokesRepository
 ): ViewModel() {

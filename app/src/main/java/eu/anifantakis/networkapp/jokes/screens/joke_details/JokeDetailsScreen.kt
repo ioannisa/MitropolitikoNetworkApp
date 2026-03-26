@@ -21,7 +21,9 @@ import eu.anifantakis.networkapp.jokes.model.Joke
 fun JokeDetailsScreenRoot(
     joke: Joke,
     modifier: Modifier = Modifier,
-    viewModel: JokesDetailsViewModel = viewModel(),
+    viewModel: JokesDetailsViewModel = viewModel {
+        JokesDetailsViewModel(joke = joke)
+    },
     onGoBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()

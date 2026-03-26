@@ -1,6 +1,6 @@
 package eu.anifantakis.networkapp.jokes.screens.joke_details
 
-import androidx.lifecycle.SavedStateHandle
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import eu.anifantakis.networkapp.jokes.model.Joke
 import kotlinx.coroutines.channels.Channel
@@ -22,11 +22,12 @@ sealed interface JokesDetailsEvent {
     data object GoBack: JokesDetailsEvent
 }
 
+@Stable
 class JokesDetailsViewModel(
-    savedStateHandle: SavedStateHandle
+    joke: Joke
 ): ViewModel() {
 
-    private val _state = MutableStateFlow(JokeDetailsState())
+    private val _state = MutableStateFlow(JokeDetailsState(joke = joke))
     val state = _state.asStateFlow()
 
     private val _eventChannel = Channel<JokesDetailsEvent>()
@@ -37,11 +38,5 @@ class JokesDetailsViewModel(
             JokeDetailsIntent.GoBack -> { _eventChannel.trySend(JokesDetailsEvent.GoBack) }
             JokeDetailsIntent.MarkFavorite -> {}
         }
-    }
-
-    init {
-        _state.value = _state.value.copy(
-            joke = savedStateHandle.get<Joke>("joke")
-        )
     }
 }
