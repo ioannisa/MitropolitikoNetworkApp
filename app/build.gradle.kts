@@ -6,9 +6,6 @@ plugins {
     // KSP + Serialization Plugins
     alias(libs.plugins.com.google.devtools.ksp)
     alias(libs.plugins.jetbrains.kotlin.serialization)
-
-    // support for Parcelable
-    id("kotlin-parcelize")
 }
 
 android {
