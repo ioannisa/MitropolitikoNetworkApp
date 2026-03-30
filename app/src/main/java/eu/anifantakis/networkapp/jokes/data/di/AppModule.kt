@@ -6,27 +6,28 @@ import eu.anifantakis.networkapp.jokes.data.database.JokesDatabase
 import eu.anifantakis.networkapp.jokes.data.network.KtorClient
 import io.ktor.client.HttpClient
 
-/**
- * Simple dependency injector for the application.
- * Provides centralized access to database and repositories.
- */
 object AppModule {
-    lateinit var jokesDatabase: JokesDatabase
-        private set
 
-    lateinit var ktorClient: HttpClient
-        private set
-
-    lateinit var jokesRepository: JokesRepository
-        private set
+    private lateinit var appContext: Context
 
     fun initialize(context: Context) {
-        ktorClient = KtorClient.httpClient
+        appContext = context.applicationContext
+    }
 
-        jokesDatabase = JokesDatabase.getDatabase(context)
-        jokesRepository = JokesRepository(
+    // SINGLETONS: We keep these as lazy so we don't open multiple database
+    // connections or create multiple heavy Ktor clients.
+    val ktorClient: HttpClient by lazy {
+        KtorClient.httpClient
+    }
+
+    val jokesDatabase: JokesDatabase by lazy {
+        JokesDatabase.getDatabase(appContext)
+    }
+
+    // FACTORY: Using get() means a new instance is created on every call.
+    val jokesRepository: JokesRepository
+        get() = JokesRepository(
             httpClient = ktorClient,
             database = jokesDatabase.jokesDao()
         )
-    }
 }

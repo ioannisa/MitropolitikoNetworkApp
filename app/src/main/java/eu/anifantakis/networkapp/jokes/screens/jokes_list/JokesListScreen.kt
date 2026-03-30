@@ -24,7 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import eu.anifantakis.networkapp.jokes.data.JokesRepository
 import eu.anifantakis.networkapp.jokes.data.di.AppModule
 import eu.anifantakis.networkapp.jokes.model.Joke
 
@@ -33,9 +32,7 @@ fun JokesListScreenRoot(
     modifier: Modifier = Modifier,
     viewModel: JokesListViewModel = viewModel {
         JokesListViewModel(
-            repository = JokesRepository(
-            httpClient = AppModule.ktorClient,
-            database = AppModule.jokesDatabase.jokesDao())
+            repository = AppModule.jokesRepository
         )
     },
     onGoToJokeDetails: (Joke) -> Unit
