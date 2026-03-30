@@ -24,8 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import eu.anifantakis.networkapp.jokes.data.JokesRepository
 import eu.anifantakis.networkapp.jokes.data.di.AppModule
 import eu.anifantakis.networkapp.jokes.model.Joke
@@ -33,18 +31,13 @@ import eu.anifantakis.networkapp.jokes.model.Joke
 @Composable
 fun JokesListScreenRoot(
     modifier: Modifier = Modifier,
-    viewModel: JokesListViewModel = viewModel(
-        factory = viewModelFactory {
-            initializer {
-                JokesListViewModel(
-                    repository = JokesRepository(
-                        httpClient = AppModule.ktorClient,
-                        database = AppModule.jokesDatabase.jokesDao()
-                    )
-                )
-            }
-        }
-    ),
+    viewModel: JokesListViewModel = viewModel {
+        JokesListViewModel(
+            repository = JokesRepository(
+            httpClient = AppModule.ktorClient,
+            database = AppModule.jokesDatabase.jokesDao())
+        )
+    },
     onGoToJokeDetails: (Joke) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()

@@ -1,5 +1,6 @@
 package eu.anifantakis.networkapp.jokes.screens.jokes_list
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.anifantakis.networkapp.jokes.data.JokesRepository
@@ -8,6 +9,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class JokesListState(
@@ -28,6 +30,7 @@ sealed interface JokesListEvent {
 /**
  * ViewModel for the jokes list screen with manual database observation and network loading.
  */
+@Stable
 class JokesListViewModel(
     private val repository: JokesRepository
 ): ViewModel() {
@@ -67,9 +70,7 @@ class JokesListViewModel(
 
             // Start collecting from the Flow of jokes from the database
             repository.getJokes().collect { jokes ->
-                _state.value = _state.value.copy(
-                    jokes = jokes
-                )
+                _state.update { it.copy(jokes = jokes) }
             }
         }
     }
@@ -81,17 +82,17 @@ class JokesListViewModel(
      */
     private fun loadFromNetwork() {
         viewModelScope.launch {
-            _state.value = _state.value.copy(loading = true)
+            _state.update { it.copy(loading = true) }
 
             repository.fetchJokesFromApi()
                 .onSuccess {
                     // Success is handled through database Flow updates
-                    _state.value = _state.value.copy(loading = false)
+                    _state.update { it.copy(loading = false) }
                 }
                 .onFailure { error ->
                     val errorMessage = error.localizedMessage ?: "Network error. Using cached data."
                     _eventChannel.send(JokesListEvent.ShowError(errorMessage))
-                    _state.value = _state.value.copy(loading = false)
+                    _state.update { it.copy(loading = false) }
                 }
 
         }

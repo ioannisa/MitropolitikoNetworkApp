@@ -14,17 +14,13 @@ abstract class JokesDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: JokesDatabase? = null
 
-        fun getDatabase(context: Context): JokesDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
+        fun getDatabase(context: Context): JokesDatabase =
+            INSTANCE ?: synchronized(this) {
+                INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
                     JokesDatabase::class.java,
                     "jokes_database"
-                ).build()
-
-                INSTANCE = instance
-                instance
+                ).build().also { INSTANCE = it }
             }
-        }
     }
 }
