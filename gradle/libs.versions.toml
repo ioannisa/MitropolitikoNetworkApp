@@ -1,5 +1,5 @@
 [versions]
-agp = "8.13.2"
+agp = "9.1.0"
 kotlin = "2.3.20"
 coreKtx = "1.18.0"
 junit = "4.13.2"
@@ -11,12 +11,9 @@ composeBom = "2026.03.01"
 
 
 coil-compose = "2.7.0"
-navigationCompose = "2.9.7"
-kotlinxSerializationJson = "1.10.0"
 com-google-devtools-ksp = "2.3.6"
 kotlinxSerialization = "2.3.20"
-navtypeparcelablehelperlibrary = "1.0.1"
-ktor = "3.4.1"
+ktor = "3.4.2"
 
 nav3Core = "1.0.1"
 lifecycleViewmodelNav3 = "2.11.0-alpha03"
@@ -59,7 +56,6 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 # ksp (Kotlin Symbol Processing - Kotlin Annotation processing replacing Java's kapt)
