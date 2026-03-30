@@ -9,6 +9,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class JokesListState(
@@ -58,23 +59,16 @@ class JokesListViewModel(
     private fun loadJokes() {
         viewModelScope.launch {
 
-            _state.value = _state.value.copy(
-                loading = true
-            )
+            _state.update { it.copy(loading = true) }
 
             repository.getJokes()
                 .onSuccess { jokes ->
-                    _state.value = _state.value.copy(
-                        jokes = jokes,
-                        loading = false
-                    )
+                    _state.update { it.copy(jokes = jokes, loading = false) }
                 }
                 .onFailure { error ->
                     val errorMessage = error.localizedMessage ?: "Unknown error"
                     _eventChannel.send(JokesListEvent.ShowError(errorMessage))
-                    _state.value = _state.value.copy(
-                        loading = false
-                    )
+                    _state.update { it.copy(loading = false) }
                 }
         }
     }
