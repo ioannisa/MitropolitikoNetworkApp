@@ -1,6 +1,7 @@
+import com.android.build.api.dsl.ApplicationExtension
+
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 
     // KSP + Serialization Plugins
@@ -8,7 +9,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
-android {
+configure<ApplicationExtension> {
     namespace = "eu.anifantakis.networkapp"
     compileSdk = 36
 
