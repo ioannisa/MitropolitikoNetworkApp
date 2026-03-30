@@ -38,23 +38,23 @@ class JokesListViewModel(
     private val _eventChannel = Channel<JokesListEvent>()
     val eventChannel = _eventChannel.receiveAsFlow()
 
-    fun onIntent(intent: JokesListIntent) {
-        when(intent) {
-            is JokesListIntent.Refresh -> {
-                loadJokes()
-            }
-
-            is JokesListIntent.ClickOnJoke -> {
-                viewModelScope.launch {
-                    _eventChannel.send(JokesListEvent.GotoJokeDetails(intent.joke))
-                }
-            }
-        }
-    }
-
     init {
         onIntent(JokesListIntent.Refresh)
     }
+
+    fun onIntent(intent: JokesListIntent) {
+        when(intent) {
+            is JokesListIntent.Refresh -> loadJokes()
+            is JokesListIntent.ClickOnJoke -> gotoJoke(intent.joke)
+        }
+    }
+
+    private fun gotoJoke(joke: Joke) {
+        viewModelScope.launch {
+            _eventChannel.send(JokesListEvent.GotoJokeDetails(joke))
+        }
+    }
+
 
     private fun loadJokes() {
         viewModelScope.launch {
