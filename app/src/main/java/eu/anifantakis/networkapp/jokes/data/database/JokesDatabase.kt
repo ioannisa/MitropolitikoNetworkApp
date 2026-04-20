@@ -1,8 +1,6 @@
 package eu.anifantakis.networkapp.jokes.data.database
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -19,24 +17,4 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
 @Database(entities = [JokeEntity::class], version = 2, exportSchema = false)
 abstract class JokesDatabase : RoomDatabase() {
     abstract fun jokesDao(): JokesDao
-
-    companion object {
-        @Volatile
-        private var INSTANCE: JokesDatabase? = null
-
-        fun getDatabase(context: Context): JokesDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    JokesDatabase::class.java,
-                    "jokes_database"
-                )
-                    .addMigrations(MIGRATION_1_2) // Add migration
-                    .build()
-
-                INSTANCE = instance
-                instance
-            }
-        }
-    }
 }

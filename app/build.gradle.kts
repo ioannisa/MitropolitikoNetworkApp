@@ -1,6 +1,7 @@
+import com.android.build.api.dsl.ApplicationExtension
+
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 
     // KSP + Serialization Plugins
@@ -11,14 +12,14 @@ plugins {
     id("kotlin-parcelize")
 }
 
-android {
+configure<ApplicationExtension> {
     namespace = "eu.anifantakis.networkapp"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "eu.anifantakis.networkapp"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
@@ -35,11 +36,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     buildFeatures {
         compose = true
@@ -63,13 +61,13 @@ dependencies {
     // Coil for online images
     implementation(libs.coil.compose)
 
-    // Navigation
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.kotlinx.serialization.json)
+    // Enable extended material icons set
+    implementation(libs.androidx.material.icons.extended)
 
-    // Ioannis Anifantakis Library to pass dataclasses between navigation screens
-    // https://github.com/ioannisa/NavTypeParcelableHelperLibrary
-    implementation(libs.navtypeparcelablehelperlibrary)
+    // Navigation
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
     // Ktor
     implementation(libs.bundles.ktor)

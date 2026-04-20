@@ -31,27 +31,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import eu.anifantakis.networkapp.jokes.data.JokesRepository
 import eu.anifantakis.networkapp.jokes.data.di.AppModule
 import eu.anifantakis.networkapp.jokes.model.Joke
 
 @Composable
 fun JokesListScreenRoot(
     modifier: Modifier = Modifier,
-    viewModel: JokesListViewModel = viewModel(
-        factory = viewModelFactory {
-            initializer {
-                JokesListViewModel(
-                    repository = JokesRepository(
-                        httpClient = AppModule.ktorClient,
-                        database = AppModule.jokesDatabase.jokesDao()
-                    )
-                )
-            }
-        }
-    ),
+    viewModel: JokesListViewModel = viewModel {
+        JokesListViewModel(
+            repository = AppModule.jokesRepository
+        )
+    },
     onGoToJokeDetails: (Joke) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -105,53 +95,64 @@ private fun JokesListScreen(
                     items = state.jokes,
                     key = { it.id }
                 ) { joke ->
-                    Card(
-                        modifier = Modifier
-                            .padding(vertical = 4.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    onIntent(JokesListIntent.ClickOnJoke(joke))
-                                }
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text(text = joke.question, fontWeight = FontWeight.Bold)
-                                Text(text = joke.answer)
-                            }
-
-                            // Favorite icon
-                            IconButton(
-                                onClick = { onIntent(JokesListIntent.ToggleFavorite(joke)) },
-                                modifier = Modifier.size(40.dp)
-                            ) {
-                                if (joke.isFavorite) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Favorite,
-                                        contentDescription = "Remove from favorites",
-                                        tint = Color.Red
-                                    )
-                                } else {
-                                    Icon(
-                                        imageVector = Icons.Outlined.FavoriteBorder,
-                                        contentDescription = "Add to favorites",
-                                        tint = Color.Gray
-                                    )
-                                }
-                            }
-                        }
-                    }
+                    JokesListItem(
+                        joke = joke,
+                        onIntent = onIntent
+                    )
                 }
             }
         }
 
         if (state.loading) {
             CircularProgressIndicator()
+        }
+    }
+}
+
+@Composable
+private fun JokesListItem(
+    joke: Joke,
+    onIntent: (JokesListIntent) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .padding(vertical = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    onIntent(JokesListIntent.ClickOnJoke(joke))
+                }
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(text = joke.question, fontWeight = FontWeight.Bold)
+                Text(text = joke.answer)
+            }
+
+            // Favorite icon
+            IconButton(
+                onClick = { onIntent(JokesListIntent.ToggleFavorite(joke)) },
+                modifier = Modifier.size(40.dp)
+            ) {
+                if (joke.isFavorite) {
+                    Icon(
+                        imageVector = Icons.Filled.Favorite,
+                        contentDescription = "Remove from favorites",
+                        tint = Color.Red
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Outlined.FavoriteBorder,
+                        contentDescription = "Add to favorites",
+                        tint = Color.Gray
+                    )
+                }
+            }
         }
     }
 }

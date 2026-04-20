@@ -27,26 +27,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import eu.anifantakis.networkapp.jokes.data.di.AppModule
-import eu.anifantakis.networkapp.jokes.model.Joke
 
 @Composable
 fun JokeDetailsScreenRoot(
-    joke: Joke,
     modifier: Modifier = Modifier,
-    viewModel: JokesDetailsViewModel = viewModel(
-        factory = viewModelFactory {
-            initializer {
-                JokesDetailsViewModel(
-                    joke = joke,
-                    repository = AppModule.jokesRepository
-                )
-            }
-        }
-    ),
+    viewModel: JokesDetailsViewModel,
     onGoBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()

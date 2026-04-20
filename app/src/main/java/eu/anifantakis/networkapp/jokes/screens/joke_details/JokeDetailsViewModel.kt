@@ -1,6 +1,6 @@
 package eu.anifantakis.networkapp.jokes.screens.joke_details
 
-import androidx.lifecycle.SavedStateHandle
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.anifantakis.networkapp.jokes.data.JokesRepository
@@ -25,6 +25,7 @@ sealed interface JokesDetailsEvent {
     data object GoBack: JokesDetailsEvent
 }
 
+@Stable
 class JokesDetailsViewModel(
     joke: Joke,
     private val repository: JokesRepository
@@ -35,57 +36,6 @@ class JokesDetailsViewModel(
 
     private val _eventChannel = Channel<JokesDetailsEvent>()
     val eventChannel = _eventChannel.receiveAsFlow()
-
-    fun onIntent(intent: JokeDetailsIntent) {
-        when(intent) {
-            JokeDetailsIntent.GoBack -> {
-                _eventChannel.trySend(JokesDetailsEvent.GoBack)
-            }
-
-            JokeDetailsIntent.ToggleFavorite -> {
-                toggleFavorite()
-            }
-        }
-    }
-
-    /**
-     * Toggle the favorite status of the current joke
-     */
-    private fun toggleFavorite() {
-        viewModelScope.launch {
-            val jokeId = state.value.joke?.id ?: return@launch
-
-            repository.toggleFavorite(jokeId)
-                .onSuccess {
-                    // Update the local state to reflect the change
-                    val updatedJoke = repository.getJokeById(jokeId).getOrNull()
-                    updatedJoke?.let {
-                        _state.value = _state.value.copy(joke = it)
-                    }
-                }
-        }
-    }
-}
-
-/**
- * Alternative constructor for use with SavedStateHandle
- */
-class JokesDetailsViewModelAlt(
-    savedStateHandle: SavedStateHandle,
-    private val repository: JokesRepository
-): ViewModel() {
-
-    private val _state = MutableStateFlow(JokeDetailsState())
-    val state = _state.asStateFlow()
-
-    private val _eventChannel = Channel<JokesDetailsEvent>()
-    val eventChannel = _eventChannel.receiveAsFlow()
-
-    init {
-        _state.value = _state.value.copy(
-            joke = savedStateHandle.get<Joke>("joke")
-        )
-    }
 
     fun onIntent(intent: JokeDetailsIntent) {
         when(intent) {
