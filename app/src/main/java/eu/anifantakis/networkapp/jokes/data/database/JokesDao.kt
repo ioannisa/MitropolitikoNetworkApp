@@ -16,12 +16,6 @@ interface JokesDao {
     fun getAllJokes(): Flow<List<JokeEntity>>
 
     /**
-     * Get only favorite jokes
-     */
-    @Query("SELECT * FROM joke WHERE isFavorite = 1")
-    suspend fun getFavoriteJokes(): List<JokeEntity>
-
-    /**
      * Update or insert jokes
      */
     @Upsert
@@ -32,12 +26,6 @@ interface JokesDao {
      */
     @Upsert
     suspend fun upsertJoke(joke: JokeEntity)
-
-    /**
-     * Delete all non-favorite jokes
-     */
-    @Query("DELETE FROM joke WHERE isFavorite = 0")
-    suspend fun deleteAllNonFavoriteJokes()
 
     /**
      * Delete all jokes (including favorites)
@@ -51,15 +39,19 @@ interface JokesDao {
     @Query("SELECT * FROM joke WHERE id = :jokeId")
     suspend fun getJokeById(jokeId: Int): JokeEntity?
 
-    /**
-     * Toggle favorite status for a joke
-     */
+
+
+    /* FAVORITES */
+
+    @Query("SELECT * FROM joke WHERE isFavorite = 1")
+    suspend fun getFavoriteJokes(): List<JokeEntity>
+
+    @Query("DELETE FROM joke WHERE isFavorite = 0")
+    suspend fun deleteAllNonFavoriteJokes()
+
     @Query("UPDATE joke SET isFavorite = NOT isFavorite WHERE id = :jokeId")
     suspend fun toggleFavorite(jokeId: Int)
 
-    /**
-     * Set favorite status for a joke
-     */
     @Query("UPDATE joke SET isFavorite = :isFavorite WHERE id = :jokeId")
     suspend fun setFavorite(jokeId: Int, isFavorite: Boolean)
 

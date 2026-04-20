@@ -139,7 +139,7 @@ private fun JokesListItem(
                 }
 
                 IconButton(
-                    onClick = {},
+                    onClick = { onIntent(JokesListIntent.ToggleFavorite(joke = joke)) },
                     modifier = Modifier.size(24.dp)
                 ) {
                     if (joke.isFavorite) {

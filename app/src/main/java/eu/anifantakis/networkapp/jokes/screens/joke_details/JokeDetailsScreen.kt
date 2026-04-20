@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -84,7 +84,7 @@ private fun JokeDetailsScreen(
             ) {
                 if (state.joke?.isFavorite == true) {
                     Icon(
-                        imageVector = Icons.Filled.Favorite,
+                        imageVector = Icons.Outlined.Favorite,
                         contentDescription = "Remove from favorites",
                         tint = Color.Red,
                         modifier = Modifier.size(36.dp)

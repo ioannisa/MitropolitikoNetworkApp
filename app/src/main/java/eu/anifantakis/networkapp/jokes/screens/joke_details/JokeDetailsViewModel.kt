@@ -9,6 +9,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class JokeDetailsState(
@@ -43,9 +44,7 @@ class JokesDetailsViewModel(
                 _eventChannel.trySend(JokesDetailsEvent.GoBack)
             }
 
-            JokeDetailsIntent.ToggleFavorite -> {
-                toggleFavorite()
-            }
+            JokeDetailsIntent.ToggleFavorite -> toggleFavorite()
         }
     }
 
@@ -54,16 +53,16 @@ class JokesDetailsViewModel(
      */
     private fun toggleFavorite() {
         viewModelScope.launch {
-            val jokeId = state.value.joke?.id ?: return@launch
-
-            repository.toggleFavorite(jokeId)
-                .onSuccess {
-                    // Update the local state to reflect the change
-                    val updatedJoke = repository.getJokeById(jokeId).getOrNull()
-                    updatedJoke?.let {
-                        _state.value = _state.value.copy(joke = it)
+            _state.value.joke?.let { joke ->
+                repository.toggleFavorite(joke.id)
+                    .onSuccess {
+                        // to be sure, let's read that the joke is updated in the database before we update the state
+                        val updatedJoke = repository.getJokeById(joke.id).getOrNull()
+                        updatedJoke?.let {
+                            _state.update { it.copy(joke = updatedJoke) }
+                        }
                     }
-                }
+            }
         }
     }
 }

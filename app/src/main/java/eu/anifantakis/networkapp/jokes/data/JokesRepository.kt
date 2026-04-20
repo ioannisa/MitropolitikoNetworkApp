@@ -40,7 +40,7 @@ class JokesRepository(
      * @return Result indicating success or failure of the fetch operation
      */
     suspend fun fetchJokesFromApi(): Result<Unit> {
-        return runCatching {
+        return safeCall {
             println("Fetching jokes from API")
 
             // First, get a list of all favorite movies to preserve their status
@@ -71,7 +71,7 @@ class JokesRepository(
      * Get a joke by its ID from the database.
      */
     suspend fun getJokeById(id: Int): Result<Joke?> {
-        return runCatching {
+        return safeCall {
             database.getJokeById(id)?.toJoke()
         }
     }
@@ -80,7 +80,7 @@ class JokesRepository(
      * Toggle the favorite status of a joke.
      */
     suspend fun toggleFavorite(jokeId: Int): Result<Unit> {
-        return runCatching {
+        return safeCall {
             database.toggleFavorite(jokeId)
         }
     }
@@ -89,7 +89,7 @@ class JokesRepository(
      * Set the favorite status of a joke.
      */
     suspend fun setFavorite(jokeId: Int, isFavorite: Boolean): Result<Unit> {
-        return runCatching {
+        return safeCall {
             database.setFavorite(jokeId, isFavorite)
         }
     }
@@ -98,7 +98,7 @@ class JokesRepository(
      * Get the current favorite status of a joke.
      */
     suspend fun isFavorite(jokeId: Int): Result<Boolean> {
-        return runCatching {
+        return safeCall {
             database.getJokeById(jokeId)?.isFavorite ?: false
         }
     }
