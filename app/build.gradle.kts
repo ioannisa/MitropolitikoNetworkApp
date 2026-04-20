@@ -61,7 +61,7 @@ dependencies {
     // Coil for online images
     implementation(libs.coil.compose)
 
-    // Enable extended material icons set
+    // Enable extended material icons set - https://fonts.google.com/icons
     implementation(libs.androidx.material.icons.extended)
 
     // Navigation

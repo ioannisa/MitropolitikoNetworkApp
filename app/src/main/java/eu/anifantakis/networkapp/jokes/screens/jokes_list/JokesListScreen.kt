@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -124,35 +125,74 @@ private fun JokesListItem(
                 .clickable {
                     onIntent(JokesListIntent.ClickOnJoke(joke))
                 }
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(16.dp)
         ) {
-            Column(
-                modifier = Modifier.weight(1f)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = joke.question, fontWeight = FontWeight.Bold)
-                Text(text = joke.answer)
-            }
+                Column(
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text(text = joke.question, fontWeight = FontWeight.Bold)
+                    Text(text = joke.answer)
+                }
 
-            // Favorite icon
-            IconButton(
-                onClick = { onIntent(JokesListIntent.ToggleFavorite(joke)) },
-                modifier = Modifier.size(40.dp)
-            ) {
-                if (joke.isFavorite) {
-                    Icon(
-                        imageVector = Icons.Filled.Favorite,
-                        contentDescription = "Remove from favorites",
-                        tint = Color.Red
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Outlined.FavoriteBorder,
-                        contentDescription = "Add to favorites",
-                        tint = Color.Gray
-                    )
+                IconButton(
+                    onClick = {},
+                    modifier = Modifier.size(24.dp)
+                ) {
+                    if (joke.isFavorite) {
+                        Icon(
+                            imageVector = Icons.Outlined.Favorite,
+                            contentDescription = "Info",
+                            tint = Color.Red
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Outlined.FavoriteBorder,
+                            contentDescription = "Info",
+                            tint = Color.Gray
+                        )
+                    }
                 }
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun PreviewJokesListItem() {
+    JokesListItem(
+        joke = Joke(
+            id = 1,
+            question = "Why did the chicken cross the road?",
+            answer = "To get to the other side!"
+        ),
+        onIntent = {}
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewJokesList() {
+    JokesListScreen(
+        state = JokesListState(
+            jokes = listOf(
+                Joke(
+                    id = 1,
+                    question = "Why did the chicken cross the road?",
+                    answer = "To get to the other side!"
+                ),
+                Joke(
+                    id = 2,
+                    question = "What do you call a bear with no teeth?",
+                    answer = "A gummy bear!"
+                )
+            ),
+            loading = false
+        ),
+        onIntent = {}
+    )
 }

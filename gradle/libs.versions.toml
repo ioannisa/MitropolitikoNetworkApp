@@ -41,7 +41,7 @@ androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-
 # coil for online images
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil-compose" }
 
-# Enable extended material icons set
+# Enable extended material icons set - https://fonts.google.com/icons
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 
 # Navigation
