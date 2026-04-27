@@ -135,14 +135,14 @@ private fun JokesListScreen(
     val pullToRefreshState = rememberPullToRefreshState()
 
     PullToRefreshBox (
-        modifier = Modifier,
+        modifier = modifier,
         contentAlignment = Alignment.Center,
         state = pullToRefreshState,
         isRefreshing = state.refreshing,
         onRefresh = { onIntent(JokesListIntent.Refresh) },
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .fillMaxSize()
         ) {
