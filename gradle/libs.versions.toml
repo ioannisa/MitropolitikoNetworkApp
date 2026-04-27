@@ -1,23 +1,23 @@
 [versions]
-agp = "9.1.1"
-kotlin = "2.3.20"
+agp = "9.2.0"
+kotlin = "2.3.21"
 coreKtx = "1.18.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
-composeBom = "2026.03.01"
+composeBom = "2026.04.01"
 
 
 coil-compose = "2.7.0"
 com-google-devtools-ksp = "2.3.6"
-kotlinxSerialization = "2.3.20"
-ktor = "3.4.2"
+kotlinxSerialization = "2.3.21"
+ktor = "3.4.3"
 room = "2.8.4"
 
-nav3Core = "1.1.0"
-lifecycleViewmodelNav3 = "2.11.0-alpha03"
+nav3Core = "1.1.1"
+lifecycleViewmodelNav3 = "2.11.0-beta01"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

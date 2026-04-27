@@ -14,7 +14,8 @@ import kotlinx.coroutines.launch
 
 data class JokesListState(
     val jokes: List<Joke> = emptyList(),
-    val loading: Boolean = false
+    val loading: Boolean = false,
+    val refreshing: Boolean = false
 )
 
 sealed interface JokesListIntent {
@@ -45,7 +46,7 @@ class JokesListViewModel(
     init {
         // Start observing database and then load from network
         loadFromDB()
-        loadFromNetwork()
+        loadFromNetwork(viaRefresh = false)
     }
 
     fun onIntent(intent: JokesListIntent) {
@@ -91,24 +92,33 @@ class JokesListViewModel(
         }
     }
 
+    private fun changeRefreshState(state: Boolean, viaRefresh: Boolean) {
+        if (viaRefresh) {
+            _state.update { it.copy(refreshing = state) }
+        } else {
+            _state.update { it.copy(loading = state) }
+        }
+    }
+
     /**
      * Loads fresh data from the network API.
      * This doesn't directly update the UI state, but triggers
      * database updates which will be observed via loadFromDB().
      */
-    private fun loadFromNetwork() {
+    private fun loadFromNetwork(viaRefresh: Boolean) {
         viewModelScope.launch {
-            _state.update { it.copy(loading = true) }
+            changeRefreshState(state = true, viaRefresh)
+
 
             repository.fetchJokesFromApi()
                 .onSuccess {
                     // Success is handled through database Flow updates
-                    _state.update { it.copy(loading = false) }
+                    changeRefreshState(state = false, viaRefresh)
                 }
                 .onFailure { error ->
                     val errorMessage = error.localizedMessage ?: "Network error. Using cached data."
                     _eventChannel.send(JokesListEvent.ShowError(errorMessage))
-                    _state.update { it.copy(loading = false) }
+                    changeRefreshState(state = false, viaRefresh)
                 }
         }
     }
@@ -119,6 +129,6 @@ class JokesListViewModel(
      * a different name to clarify its use as a user-triggered action.
      */
     private fun refresh() {
-        loadFromNetwork()
+        loadFromNetwork(viaRefresh = true)
     }
 }
