@@ -2,6 +2,7 @@ package eu.anifantakis.networkapp.jokes.data.di
 
 import android.content.Context
 import androidx.room.Room
+import eu.anifantakis.lib.ksafe.KSafe
 import eu.anifantakis.networkapp.jokes.data.JokesRepository
 import eu.anifantakis.networkapp.jokes.data.database.JokesDatabase
 import eu.anifantakis.networkapp.jokes.data.database.MIGRATION_1_2
@@ -32,10 +33,15 @@ object AppModule {
             .build()
     }
 
+    val kSafe: KSafe by lazy {
+        KSafe(appContext)
+    }
+
     // FACTORY: Using get() means a new instance is created on every call.
     val jokesRepository: JokesRepository
         get() = JokesRepository(
             httpClient = ktorClient,
-            database = jokesDatabase.jokesDao()
+            database = jokesDatabase.jokesDao(),
+            kSafe = kSafe
         )
 }

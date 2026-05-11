@@ -1,5 +1,7 @@
 package eu.anifantakis.networkapp.jokes.data
 
+import eu.anifantakis.lib.ksafe.KSafe
+import eu.anifantakis.lib.ksafe.invoke
 import eu.anifantakis.networkapp.jokes.data.database.JokesDao
 import eu.anifantakis.networkapp.jokes.model.Joke
 import eu.anifantakis.networkapp.jokes.model.JokeDto
@@ -10,16 +12,21 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Repository implementation for jokes data with offline-first approach.
  */
 class JokesRepository(
     private val httpClient: HttpClient,
-    private val database: JokesDao
+    private val database: JokesDao,
+    private val kSafe: KSafe
 ) {
     private val baseUrl = "https://official-joke-api.appspot.com"
     private val randomJokesPath = "/random_ten"
+
+    private var lastUpdateDateTime: String? by kSafe(null)
 
     /**
      * Gets a Flow of all jokes from the database.
@@ -63,9 +70,13 @@ class JokesRepository(
             // Upsert new jokes (this won't affect existing favorites due to Room's upsert behavior)
             database.upsertJokes(jokesToUpsert)
 
+            lastUpdateDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss"))
+
             println("Successfully updated database with ${remoteJokes.size} jokes")
         }
     }
+
+    fun getLastUpdate(): String? = lastUpdateDateTime
 
     /**
      * Get a joke by its ID from the database.

@@ -1,16 +1,17 @@
 package eu.anifantakis.networkapp.jokes.data.network
 
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import io.ktor.client.engine.okhttp.OkHttp
+import java.util.concurrent.TimeUnit
 
 object KtorClient {
 
-    val httpClient = HttpClient(CIO) {
+    val httpClient = HttpClient(OkHttp) {
         // expectSuccess = true // shorthand for: "install a built-in validator that throws when status 200..299."
 
         // For a customized management for success range, instead of "expectSuccess" use "HttpResponseValidator".
@@ -33,7 +34,9 @@ object KtorClient {
         }
 
         engine {
-            requestTimeout = 10000
+            config {
+                callTimeout(10, TimeUnit.SECONDS)
+            }
         }
     }
 

@@ -78,6 +78,11 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
+    // Persistence - KSafe
+    implementation(libs.ksafe)
+    implementation(libs.ksafe.compose)
+    implementation(libs.ksafe.biometrics)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

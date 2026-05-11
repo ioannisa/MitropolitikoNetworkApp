@@ -23,6 +23,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
@@ -34,7 +35,6 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -43,10 +43,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.anifantakis.lib.ksafe.compose.rememberKSafeState
 import eu.anifantakis.networkapp.jokes.data.di.AppModule
 import eu.anifantakis.networkapp.jokes.model.Joke
 
@@ -147,9 +149,11 @@ private fun JokesListScreen(
                 .fillMaxSize()
         ) {
 
-            var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 
-            val tabs  = listOf(
+            //var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
+            var selectedTabIndex by AppModule.kSafe.rememberKSafeState(0)
+
+            val tabs = listOf(
                 "All",
                 "Favorites"
             )
@@ -162,7 +166,14 @@ private fun JokesListScreen(
                     Tab(
                         text = { Text(title) },
                         selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index }
+                        onClick = {
+
+                            println("[test] selectedTabIndex before $selectedTabIndex")
+                            selectedTabIndex = index
+                            println("[test] index: $index")
+                            println("[test] selectedTabIndex after $selectedTabIndex")
+
+                        }
                     )
                 }
             }
@@ -175,7 +186,9 @@ private fun JokesListScreen(
                 else -> state.jokes
             }
 
-            LazyColumn {
+            LazyColumn(
+                modifier = Modifier.weight(1f)
+            ) {
                 items(
                     items = displayedJokes,
                     key = { it.id }
@@ -185,6 +198,17 @@ private fun JokesListScreen(
                         onIntent = onIntent
                     )
                 }
+            }
+
+            state.lastUpdate?.let { lastUpdate ->
+                Text(
+                    text = "Last updated: $lastUpdate",
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    textAlign = TextAlign.Center
+                )
             }
         }
 

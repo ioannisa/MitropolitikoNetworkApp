@@ -15,13 +15,14 @@ import kotlinx.coroutines.launch
 data class JokesListState(
     val jokes: List<Joke> = emptyList(),
     val loading: Boolean = false,
-    val refreshing: Boolean = false
+    val refreshing: Boolean = false,
+    val lastUpdate: String? = null
 )
 
-sealed interface JokesListIntent {
-    data object Refresh: JokesListIntent
-    data class ClickOnJoke(val joke: Joke): JokesListIntent
-    data class ToggleFavorite(val joke: Joke): JokesListIntent
+sealed class JokesListIntent {
+    data object Refresh: JokesListIntent()
+    data class ClickOnJoke(val joke: Joke): JokesListIntent()
+    data class ToggleFavorite(val joke: Joke): JokesListIntent()
 }
 
 sealed interface JokesListEvent {
@@ -46,7 +47,12 @@ class JokesListViewModel(
     init {
         // Start observing database and then load from network
         loadFromDB()
+        refreshLastUpdate()
         loadFromNetwork(viaRefresh = false)
+    }
+
+    private fun refreshLastUpdate() {
+        _state.update { it.copy(lastUpdate = repository.getLastUpdate()) }
     }
 
     fun onIntent(intent: JokesListIntent) {
@@ -113,6 +119,7 @@ class JokesListViewModel(
             repository.fetchJokesFromApi()
                 .onSuccess {
                     // Success is handled through database Flow updates
+                    refreshLastUpdate()
                     changeRefreshState(state = false, viaRefresh)
                 }
                 .onFailure { error ->
