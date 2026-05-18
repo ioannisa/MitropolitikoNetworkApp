@@ -1,7 +1,7 @@
 package eu.anifantakis.networkapp
 
 import android.app.Application
-import eu.anifantakis.networkapp.jokes.data.di.AppModule
+import eu.anifantakis.networkapp.jokes.di.AppModule
 
 class MyApplication: Application() {
 

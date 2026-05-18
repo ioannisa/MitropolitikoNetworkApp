@@ -9,11 +9,11 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import eu.anifantakis.networkapp.jokes.data.di.AppModule
-import eu.anifantakis.networkapp.jokes.model.Joke
-import eu.anifantakis.networkapp.jokes.screens.joke_details.JokeDetailsScreenRoot
-import eu.anifantakis.networkapp.jokes.screens.joke_details.JokesDetailsViewModel
-import eu.anifantakis.networkapp.jokes.screens.jokes_list.JokesListScreenRoot
+import eu.anifantakis.networkapp.jokes.di.AppModule
+import eu.anifantakis.networkapp.jokes.features.jokes.domain.Joke
+import eu.anifantakis.networkapp.jokes.features.jokes.presentation.screens.joke_details.JokeDetailsScreenRoot
+import eu.anifantakis.networkapp.jokes.features.jokes.presentation.screens.joke_details.JokesDetailsViewModel
+import eu.anifantakis.networkapp.jokes.features.jokes.presentation.screens.jokes_list.JokesListScreenRoot
 import kotlinx.serialization.Serializable
 
 sealed interface RandomJokesRoute: NavKey{

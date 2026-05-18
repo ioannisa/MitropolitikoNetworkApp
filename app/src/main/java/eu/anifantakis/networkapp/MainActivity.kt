@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import eu.anifantakis.networkapp.ui.theme.NetworkAppTheme
+import eu.anifantakis.networkapp.jokes.features.core.presentation.ui.theme.NetworkAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
