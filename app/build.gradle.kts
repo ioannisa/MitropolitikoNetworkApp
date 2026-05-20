@@ -7,6 +7,7 @@ plugins {
     // KSP + Serialization Plugins
     alias(libs.plugins.com.google.devtools.ksp)
     alias(libs.plugins.jetbrains.kotlin.serialization)
+    alias(libs.plugins.koin.compiler)
 
     // support for Parcelable
     id("kotlin-parcelize")
@@ -46,6 +47,10 @@ configure<ApplicationExtension> {
 
 ksp {
     arg("appfunctions:aggregateAppFunctions", "true")
+}
+
+koinCompiler {
+    compileSafety = true
 }
 
 dependencies {

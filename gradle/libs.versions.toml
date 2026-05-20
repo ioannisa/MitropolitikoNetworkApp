@@ -22,6 +22,7 @@ lifecycleViewmodelNav3 = "2.11.0-beta02"
 ksafe = "2.0.0"
 androidx-appfunctions = "1.0.0-alpha09"
 koin = "4.2.1"
+koin-plugin = "1.0.0-RC2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -88,6 +89,7 @@ com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "com-g
 
 #serialization
 jetbrains-kotlin-serialization = { id ="org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinxSerialization"}
+koin-compiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koin-plugin" }
 
 [bundles]
 ktor = [
