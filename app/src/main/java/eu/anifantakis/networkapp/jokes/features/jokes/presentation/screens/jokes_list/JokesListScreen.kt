@@ -48,21 +48,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import eu.anifantakis.lib.ksafe.KSafe
 import eu.anifantakis.lib.ksafe.compose.rememberKSafeState
 import eu.anifantakis.networkapp.R
-import eu.anifantakis.networkapp.jokes.di.AppModule
 import eu.anifantakis.networkapp.jokes.features.jokes.domain.Joke
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JokesListScreenRoot(
     modifier: Modifier = Modifier,
-    viewModel: JokesListViewModel = viewModel {
-        JokesListViewModel(
-            repository = AppModule.jokesRepository
-        )
-    },
+    viewModel: JokesListViewModel = koinViewModel(),
     onGoToJokeDetails: (Joke) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -158,9 +155,9 @@ private fun JokesListScreen(
                 .fillMaxSize()
         ) {
 
-
+            val kSafe: KSafe = koinInject()
             //var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
-            var selectedTabIndex by AppModule.kSafe.rememberKSafeState(0)
+            var selectedTabIndex by kSafe.rememberKSafeState(0)
 
             val tabs = listOf(
                 "All",

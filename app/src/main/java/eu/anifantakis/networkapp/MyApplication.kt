@@ -2,21 +2,24 @@ package eu.anifantakis.networkapp
 
 import android.app.Application
 import androidx.appfunctions.service.AppFunctionConfiguration
-import eu.anifantakis.networkapp.jokes.di.AppModule
-import eu.anifantakis.networkapp.jokes.features.jokes.appfunctions.JokesAppFunctions
+import eu.anifantakis.networkapp.jokes.di.appModule
+import org.koin.android.ext.android.inject
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
 
 class MyApplication: Application(), AppFunctionConfiguration.Provider {
 
     override fun onCreate() {
         super.onCreate()
 
-        // Initialize our dependencies
-        AppModule.initialize(applicationContext)
+        startKoin {
+            androidLogger()
+            androidContext(this@MyApplication)
+            modules(appModule)
+        }
     }
 
-    override val appFunctionConfiguration: AppFunctionConfiguration
-        get() = AppFunctionConfiguration.Builder()
-            .addEnclosingClassFactory(JokesAppFunctions::class.java) { JokesAppFunctions() }
-            .build()
+    override val appFunctionConfiguration: AppFunctionConfiguration by inject()
 
 }

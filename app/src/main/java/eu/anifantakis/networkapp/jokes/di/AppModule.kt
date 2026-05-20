@@ -1,60 +1,55 @@
 package eu.anifantakis.networkapp.jokes.di
 
-import android.content.Context
 import androidx.room.Room
 import eu.anifantakis.lib.ksafe.KSafe
-import eu.anifantakis.networkapp.jokes.features.jokes.domain.JokesRepository
-import eu.anifantakis.networkapp.jokes.features.jokes.data.JokesRepositoryImpl
 import eu.anifantakis.networkapp.jokes.features.core.data.JokesDatabase
-import eu.anifantakis.networkapp.jokes.features.core.data.MIGRATION_1_2
-import eu.anifantakis.networkapp.jokes.features.jokes.domain.datasource.LocalJokesDataSource
-import eu.anifantakis.networkapp.jokes.features.jokes.data.datasource.LocalJokesDataSourceImpl
-import eu.anifantakis.networkapp.jokes.features.jokes.domain.datasource.RemoteJokesDataSource
-import eu.anifantakis.networkapp.jokes.features.jokes.data.datasource.RemoteJokesDataSourceImpl
 import eu.anifantakis.networkapp.jokes.features.core.data.KtorClient
-import io.ktor.client.HttpClient
+import eu.anifantakis.networkapp.jokes.features.core.data.MIGRATION_1_2
+import eu.anifantakis.networkapp.jokes.features.jokes.data.JokesRepositoryImpl
+import eu.anifantakis.networkapp.jokes.features.jokes.data.datasource.LocalJokesDataSourceImpl
+import eu.anifantakis.networkapp.jokes.features.jokes.data.datasource.RemoteJokesDataSourceImpl
+import eu.anifantakis.networkapp.jokes.features.jokes.domain.JokesRepository
+import eu.anifantakis.networkapp.jokes.features.jokes.domain.datasource.LocalJokesDataSource
+import eu.anifantakis.networkapp.jokes.features.jokes.domain.datasource.RemoteJokesDataSource
+import eu.anifantakis.networkapp.jokes.features.jokes.presentation.screens.joke_details.JokesDetailsViewModel
+import eu.anifantakis.networkapp.jokes.features.jokes.presentation.screens.jokes_list.JokesListViewModel
+import androidx.appfunctions.service.AppFunctionConfiguration
+import eu.anifantakis.networkapp.jokes.features.jokes.appfunctions.JokesAppFunctions
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.module
 
-object AppModule {
-
-    private lateinit var appContext: Context
-
-    fun initialize(context: Context) {
-        appContext = context.applicationContext
-    }
-
-    // SINGLETONS: We keep these as lazy so we don't open multiple database
-    // connections or create multiple heavy Ktor clients.
-    val ktorClient: HttpClient by lazy {
-        KtorClient.httpClient
-    }
-
-    val jokesDatabase: JokesDatabase by lazy {
+val appModule = module {
+    single { KtorClient.httpClient }
+    single {
         Room.databaseBuilder(
-            appContext,
+            androidContext(),
             JokesDatabase::class.java,
             "jokes_database"
         )
-            .addMigrations(MIGRATION_1_2) // Add migration
+            .addMigrations(MIGRATION_1_2)
+            .build()
+    }
+    single { KSafe(androidContext()) }
+    single<LocalJokesDataSource> { LocalJokesDataSourceImpl(get<JokesDatabase>().jokesDao()) }
+    single<RemoteJokesDataSource> { RemoteJokesDataSourceImpl(get()) }
+
+    factory<JokesRepository> {
+        JokesRepositoryImpl(
+            remoteDataSource = get(),
+            localDataSource = get(),
+            kSafe = get()
+        )
+    }
+
+    // App Functions
+    single { JokesAppFunctions() }
+    single {
+        AppFunctionConfiguration.Builder()
+            .addEnclosingClassFactory(JokesAppFunctions::class.java) { get<JokesAppFunctions>() }
             .build()
     }
 
-    val kSafe: KSafe by lazy {
-        KSafe(appContext)
-    }
-
-    val localJokesDataSource: LocalJokesDataSource by lazy {
-        LocalJokesDataSourceImpl(jokesDatabase.jokesDao())
-    }
-
-    val remoteJokesDataSource: RemoteJokesDataSource by lazy {
-        RemoteJokesDataSourceImpl(ktorClient)
-    }
-
-    // FACTORY: Using get() means a new instance is created on every call.
-    val jokesRepository: JokesRepository
-        get() = JokesRepositoryImpl(
-            remoteDataSource = remoteJokesDataSource,
-            localDataSource = localJokesDataSource,
-            kSafe = kSafe
-        )
+    viewModel { JokesListViewModel(get()) }
+    viewModel { parameters -> JokesDetailsViewModel(joke = parameters.get(), repository = get()) }
 }

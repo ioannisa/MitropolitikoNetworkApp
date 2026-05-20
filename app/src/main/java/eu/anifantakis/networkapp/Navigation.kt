@@ -2,19 +2,19 @@ package eu.anifantakis.networkapp
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import eu.anifantakis.networkapp.jokes.di.AppModule
 import eu.anifantakis.networkapp.jokes.features.jokes.domain.Joke
 import eu.anifantakis.networkapp.jokes.features.jokes.presentation.screens.joke_details.JokeDetailsScreenRoot
 import eu.anifantakis.networkapp.jokes.features.jokes.presentation.screens.joke_details.JokesDetailsViewModel
 import eu.anifantakis.networkapp.jokes.features.jokes.presentation.screens.jokes_list.JokesListScreenRoot
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 sealed interface RandomJokesRoute: NavKey{
     @Serializable data object JokesList: RandomJokesRoute
@@ -48,12 +48,7 @@ fun NavigationRoot(
             entry<RandomJokesRoute.SelectedJoke> {
                 println(it.joke.answer)
 
-                val viewModel: JokesDetailsViewModel = viewModel {
-                    JokesDetailsViewModel(
-                        joke = it.joke,
-                        repository = AppModule.jokesRepository
-                    )
-                }
+                val viewModel: JokesDetailsViewModel = koinViewModel { parametersOf(it.joke) }
 
                 JokeDetailsScreenRoot(
                     modifier = modifier,

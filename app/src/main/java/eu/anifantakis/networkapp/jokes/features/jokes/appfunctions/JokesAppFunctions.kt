@@ -2,19 +2,22 @@ package eu.anifantakis.networkapp.jokes.features.jokes.appfunctions
 
 import androidx.appfunctions.AppFunctionContext
 import androidx.appfunctions.service.AppFunction
-import eu.anifantakis.networkapp.jokes.di.AppModule
+import eu.anifantakis.networkapp.jokes.features.jokes.domain.JokesRepository
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 /**
  * App Functions that can be exposed to AI agents via MCP.
  */
-class JokesAppFunctions {
+class JokesAppFunctions : KoinComponent {
+
+    private val repository: JokesRepository by inject()
 
     /**
      * Clears all favorite jokes from the database.
      */
     @AppFunction(isDescribedByKDoc = true)
     suspend fun clearFavorites(context: AppFunctionContext): String {
-        val repository = AppModule.jokesRepository
         val result = repository.clearAllFavorites()
         
         return if (result.isSuccess) {
@@ -28,10 +31,10 @@ class JokesAppFunctions {
 
 /* Test by running:
 
-adb shell cmd app_function list-app-functions | grep -A 10 "eu.anifantakis.networkapp.jokes"
+adb shell cmd app_function list-app-functions | grep -A 10 "eu.anifantakis.networkapp"
 
 adb shell cmd app_function execute-app-function \
-  --package eu.anifantakis.networkapp.jokes \
+  --package eu.anifantakis.networkapp \
   --function eu.anifantakis.networkapp.jokes.features.jokes.appfunctions.JokesAppFunctions#clearFavorites \
   --parameters '{}'
 
