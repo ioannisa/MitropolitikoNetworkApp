@@ -57,4 +57,10 @@ interface JokesDao {
 
     @Query("SELECT id FROM joke WHERE isFavorite = 1")
     suspend fun getFavoriteJokesIds(): List<Int>
+
+    /**
+     * Clear all favorite status (set isFavorite to false for all jokes)
+     */
+    @Query("UPDATE joke SET isFavorite = 0")
+    suspend fun clearAllFavorites()
 }

@@ -79,4 +79,10 @@ class JokesRepositoryImpl(
             localDataSource.getJokeById(jokeId)?.isFavorite ?: false
         }
     }
+
+    override suspend fun clearAllFavorites(): Result<Unit> {
+        return safeCall {
+            localDataSource.clearAllFavorites()
+        }
+    }
 }

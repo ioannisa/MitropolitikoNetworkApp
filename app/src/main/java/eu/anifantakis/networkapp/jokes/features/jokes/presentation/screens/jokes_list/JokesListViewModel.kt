@@ -23,6 +23,7 @@ sealed class JokesListIntent {
     data object Refresh: JokesListIntent()
     data class ClickOnJoke(val joke: Joke): JokesListIntent()
     data class ToggleFavorite(val joke: Joke): JokesListIntent()
+    data object ClearFavorites: JokesListIntent()
 }
 
 sealed interface JokesListEvent {
@@ -70,6 +71,22 @@ class JokesListViewModel(
             is JokesListIntent.ToggleFavorite -> {
                 toggleFavorite(intent.joke)
             }
+
+            is JokesListIntent.ClearFavorites -> {
+                clearFavorites()
+            }
+        }
+    }
+
+    /**
+     * Clear all favorite jokes
+     */
+    private fun clearFavorites() {
+        viewModelScope.launch {
+            repository.clearAllFavorites()
+                .onFailure { error ->
+                    _eventChannel.send(JokesListEvent.ShowError("Failed to clear favorites: ${error.localizedMessage}"))
+                }
         }
     }
 

@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import eu.anifantakis.lib.ksafe.compose.rememberKSafeState
+import eu.anifantakis.networkapp.R
 import eu.anifantakis.networkapp.jokes.di.AppModule
 import eu.anifantakis.networkapp.jokes.features.jokes.domain.Joke
 
@@ -111,6 +113,13 @@ fun JokesListScreenRoot(
                             onClick = {
                                 menuExpanded = false
                                 //onGoToAbout() // Call the navigation lambda
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.menu_clear_favorites)) },
+                            onClick = {
+                                menuExpanded = false
+                                viewModel.onIntent(JokesListIntent.ClearFavorites)
                             }
                         )
                     }

@@ -44,6 +44,10 @@ configure<ApplicationExtension> {
     }
 }
 
+ksp {
+    arg("appfunctions:aggregateAppFunctions", "true")
+}
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -82,6 +86,11 @@ dependencies {
     implementation(libs.ksafe)
     implementation(libs.ksafe.compose)
     implementation(libs.ksafe.biometrics)
+
+    // App Functions
+    implementation(libs.androidx.appfunctions)
+    implementation(libs.androidx.appfunctions.service)
+    ksp(libs.androidx.appfunctions.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
