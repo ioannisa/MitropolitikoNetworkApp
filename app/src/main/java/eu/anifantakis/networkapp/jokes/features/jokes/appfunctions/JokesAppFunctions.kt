@@ -28,7 +28,7 @@ class JokesAppFunctions {
 
 /* Test by running:
 
-adb shell cmd app_function list-app-functions | grep -A 10 "eu.anifantakis.networkapp.jokes"
+adb shell cmd app_function list-app-functions | grep -A 10 "eu.anifantakis.networkapp"
 
 adb shell cmd app_function execute-app-function \
   --package eu.anifantakis.networkapp \
