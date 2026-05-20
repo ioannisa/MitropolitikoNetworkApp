@@ -31,7 +31,7 @@ class JokesAppFunctions {
 adb shell cmd app_function list-app-functions | grep -A 10 "eu.anifantakis.networkapp.jokes"
 
 adb shell cmd app_function execute-app-function \
-  --package eu.anifantakis.networkapp.jokes \
+  --package eu.anifantakis.networkapp \
   --function eu.anifantakis.networkapp.jokes.features.jokes.appfunctions.JokesAppFunctions#clearFavorites \
   --parameters '{}'
 
