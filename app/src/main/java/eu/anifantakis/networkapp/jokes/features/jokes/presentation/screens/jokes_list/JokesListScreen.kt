@@ -248,6 +248,16 @@ private fun JokesListItem(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Joke ID — shown so we can demonstrate the setFavorite AppFunction live
+                // (e.g. `--parameters '{"jokeId": <id>, "isFavorite": true}'`).
+                Text(
+                    text = "${joke.id}",
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(end = 12.dp)
+                )
+
                 Column(
                     modifier = Modifier.weight(1f),
                 ) {

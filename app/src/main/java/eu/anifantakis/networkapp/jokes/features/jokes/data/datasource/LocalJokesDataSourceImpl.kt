@@ -43,6 +43,10 @@ class LocalJokesDataSourceImpl(
         return database.getFavoriteJokesIds()
     }
 
+    override suspend fun getFavoriteJokes(): List<Joke> {
+        return database.getFavoriteJokes().map { it.toJoke() }
+    }
+
     override suspend fun clearAllFavorites() {
         database.clearAllFavorites()
     }

@@ -80,6 +80,12 @@ class JokesRepositoryImpl(
         }
     }
 
+    override suspend fun getFavorites(): Result<List<Joke>> {
+        return safeCall {
+            localDataSource.getFavoriteJokes()
+        }
+    }
+
     override suspend fun clearAllFavorites(): Result<Unit> {
         return safeCall {
             localDataSource.clearAllFavorites()

@@ -43,6 +43,11 @@ interface JokesRepository {
     suspend fun isFavorite(jokeId: Int): Result<Boolean>
 
     /**
+     * Get all jokes the user has currently marked as favorites.
+     */
+    suspend fun getFavorites(): Result<List<Joke>>
+
+    /**
      * Clear all favorite jokes.
      */
     suspend fun clearAllFavorites(): Result<Unit>

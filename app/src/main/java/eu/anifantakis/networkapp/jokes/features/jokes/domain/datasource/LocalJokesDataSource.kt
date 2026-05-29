@@ -20,6 +20,8 @@ interface LocalJokesDataSource {
 
     suspend fun getFavoriteJokesIds(): List<Int>
 
+    suspend fun getFavoriteJokes(): List<Joke>
+
     suspend fun clearAllFavorites()
 
 }
