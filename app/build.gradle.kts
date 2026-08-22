@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.koin.compiler)
 
     // support for Parcelable
-    id("kotlin-parcelize")
+    //id("kotlin-parcelize")
 }
 
 configure<ApplicationExtension> {
